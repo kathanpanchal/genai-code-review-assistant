@@ -1,3 +1,4 @@
+import logo from '../assets/logo.png'
 export default function Sidebar({
   active = "analyze",
   onNavigate = () => {}
@@ -6,7 +7,11 @@ export default function Sidebar({
     <aside className="sidebar-shell hidden min-h-screen w-[306px] shrink-0 flex-col border-r border-white/10 px-6 py-8 text-white lg:flex">
       <div className="mb-10 flex items-center gap-4">
         <div className="brand-bot">
-          <IconRobot />
+          <img
+            src={logo}
+            alt="GenAI Logo"
+            className="h-20 w-20 object-contain"
+          />
         </div>
 
         <div>
@@ -82,7 +87,7 @@ export default function Sidebar({
 
       <div className="mt-auto -mx-6 border-t border-white/10 px-8 pt-5">
         <a
-          href="https://github.com"
+          href="https://github.com/kathanpanchal/genai-code-review-assistant"
           className="flex items-center gap-3 text-base text-slate-200 transition hover:text-white"
           target="_blank"
           rel="noreferrer"
@@ -97,7 +102,7 @@ export default function Sidebar({
         </a>
 
         <p className="mt-6 text-sm text-slate-500">
-          &copy; 2026 GenAI Code Review
+          &copy; 2026 GenAI PR Reviewer
         </p>
       </div>
     </aside>

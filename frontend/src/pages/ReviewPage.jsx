@@ -67,7 +67,7 @@ export default function ReviewPage() {
 
                 <main className="relative flex-1 px-5 py-8 sm:px-8 lg:px-9">
                     <a
-                        href="https://github.com"
+                        href="https://github.com/kathanpanchal/genai-code-review-assistant"
                         target="_blank"
                         rel="noreferrer"
                         className="github-star absolute right-7 top-6 hidden items-center gap-2 rounded-lg border border-slate-700/70 bg-slate-950/50 px-4 py-2 text-base text-white shadow-lg transition hover:border-violet-400/50 hover:bg-slate-900/70 xl:flex"
