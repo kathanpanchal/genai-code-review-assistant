@@ -1,6 +1,8 @@
 import { useState } from 'react'
 
-export default function PRInputCard({ onAnalyze, loadingState }) {
+const SAMPLE_PR_URL = 'https://github.com/kathanpanchal/genai-code-review-test/pull/1'
+
+export default function PRInputCard({ onAnalyze, loading }) {
   const [url, setUrl] = useState('')
 
   function handleAnalyze() {
@@ -32,13 +34,22 @@ export default function PRInputCard({ onAnalyze, loadingState }) {
 
         <button
           onClick={handleAnalyze}
-          disabled={Boolean(loadingState)}
+          disabled={loading}
           className="flex h-[62px] min-w-[212px] items-center justify-center gap-3 rounded-lg bg-gradient-to-r from-violet-500 to-blue-600 px-8 text-lg font-bold text-white shadow-[0_18px_46px_rgba(82,71,255,0.35)] transition hover:translate-y-[-1px] hover:shadow-[0_22px_54px_rgba(82,71,255,0.45)] disabled:cursor-not-allowed disabled:opacity-80"
         >
           <IconSpark />
-          <span>{loadingState ? loadingState : 'Analyze PR'}</span>
+          <span>{loading ? 'Analyzing...' : 'Analyze PR'}</span>
         </button>
       </div>
+
+      <button
+        type="button"
+        onClick={() => setUrl(SAMPLE_PR_URL)}
+        disabled={loading}
+        className="mt-4 rounded-lg border border-violet-400/30 bg-violet-500/10 px-4 py-2 text-sm font-semibold text-violet-200 transition hover:border-violet-400/60 hover:bg-violet-500/20 disabled:opacity-60"
+      >
+        Try Sample PR
+      </button>
 
       <div className="mt-5 flex items-center gap-3 text-sm text-slate-300">
         <span className="h-6 w-6 text-emerald-500">

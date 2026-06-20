@@ -22,20 +22,9 @@ export default function ReviewPage() {
         setLoading(true)
         setIssues(null)
 
-        const steps = [
-            'Fetching diff...',
-            'Running Gemini review...',
-            'Generating suggestions...'
-        ]
-
         try {
-            for (let i = 0; i < steps.length; i++) {
-                setLoadingStep(steps[i])
-                // small delay for UX
-                await new Promise((r) => setTimeout(r, 600))
-            }
-
-            const res = await reviewPullRequest(prUrl)
+            setLoadingStep('fetching')
+            const res = await reviewPullRequest(prUrl, setLoadingStep)
 
             if (res?.issues) {
                 setIssues(res.issues)
@@ -43,7 +32,7 @@ export default function ReviewPage() {
                 setIssues([])
             }
         } catch (err) {
-            setError(err.message || 'Please verify the PR URL and try again.')
+            setError(err.message || 'Unable to analyze the PR. Please try again.')
         } finally {
             setLoading(false)
             setLoadingStep('')
@@ -82,7 +71,7 @@ export default function ReviewPage() {
                         <div className="mx-auto w-full max-w-[1130px] pt-10">
                             <Hero />
 
-                            <PRInputCard onAnalyze={analyze} loadingState={loading ? loadingStep || 'Analyzing...' : null} />
+                            <PRInputCard onAnalyze={analyze} loading={loading} />
 
                             <section className="mt-8">
                                 <div className="mb-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">

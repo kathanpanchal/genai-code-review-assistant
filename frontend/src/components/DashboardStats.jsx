@@ -25,35 +25,34 @@ export default function DashboardStats({ metrics }) {
   const hits = toNumber(metrics?.hits);
   const misses = toNumber(metrics?.misses);
   const hitRate = normalizeRate(metrics?.hit_rate);
-  const totalReviews = hits + misses;
-  const derivedReviews = totalReviews || 12;
-  const totalIssues = deriveIssueCount(derivedReviews, metrics);
-  const costSaved = deriveCostSaved(hits);
+  const totalReviews = toNumber(metrics?.total_reviews);
+  const totalIssues = toNumber(metrics?.total_issues);
+  const highCount = toNumber(metrics?.high_count);
 
   const stats = [
     {
       title: "Total Reviews",
-      value: formatNumber(derivedReviews),
-      detail: `${formatNumber(hits)} cache hits`,
+      value: formatNumber(totalReviews),
+      detail: "Successful pull request reviews",
       tone: "reviews"
+    },
+    {
+      title: "Total Issues Found",
+      value: formatNumber(totalIssues),
+      detail: "Across all recorded reviews",
+      tone: "issues"
+    },
+    {
+      title: "High Severity Issues",
+      value: formatNumber(highCount),
+      detail: "Requires priority attention",
+      tone: "savings"
     },
     {
       title: "Cache Hit Rate",
       value: `${hitRate}%`,
       detail: `${formatNumber(hits)} hits / ${formatNumber(misses)} misses`,
       tone: "cache"
-    },
-    {
-      title: "Total Issues Found",
-      value: formatNumber(totalIssues),
-      detail: "Across recent pull requests",
-      tone: "issues"
-    },
-    {
-      title: "API Cost Saved",
-      value: `$${costSaved}`,
-      detail: "Estimated from cached reviews",
-      tone: "savings"
     }
   ];
 
@@ -98,23 +97,6 @@ function StatCard({ stat }) {
       </p>
     </article>
   );
-}
-
-function deriveIssueCount(totalReviews, metrics) {
-  const explicit =
-    metrics?.total_issues ??
-    metrics?.issues ??
-    metrics?.issues_found;
-
-  if (Number.isFinite(Number(explicit))) {
-    return Number(explicit);
-  }
-
-  return Math.max(3, Math.round(totalReviews * 2.7));
-}
-
-function deriveCostSaved(hits) {
-  return (hits * 0.04).toFixed(2);
 }
 
 function normalizeRate(rate) {

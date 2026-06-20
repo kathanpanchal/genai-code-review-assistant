@@ -3,7 +3,10 @@ from app.cache.cache_manager import CacheManager
 from app.cache.cache_repository import CacheRepository
 from app.cache.cache_metrics import CacheMetrics
 from app.github.github_client import GitHubClient
+from app.database.review_history_repository import ReviewHistoryRepository
+from app.exceptions import InvalidPullRequestURL
 from app.utils.review_formatter import format_review
+import re
 
 
 class ReviewService:
@@ -15,6 +18,8 @@ class ReviewService:
         self.cache_repository = CacheRepository()
 
         self.github_client = GitHubClient()
+
+        self.history_repository = ReviewHistoryRepository()
     
 
     def parse_pr_url(
@@ -22,20 +27,18 @@ class ReviewService:
         pr_url
     ):
 
-        parts = (
-            pr_url
-            .replace(
-                "https://github.com/",
-                ""
+        match = re.fullmatch(
+            r"https://github\.com/([^/]+)/([^/]+)/pull/(\d+)/?",
+            pr_url.strip()
+        )
+
+        if not match:
+            raise InvalidPullRequestURL(
+                "Enter a valid public GitHub pull request URL."
             )
-            .split("/")
-        )
 
-        repo_name = (
-            f"{parts[0]}/{parts[1]}"
-        )
-
-        pr_number = int(parts[3])
+        repo_name = f"{match.group(1)}/{match.group(2)}"
+        pr_number = int(match.group(3))
 
         return (
             repo_name,
@@ -89,17 +92,7 @@ class ReviewService:
         pr_number
     ):
 
-        diff = (
-            self.github_client
-            .get_pull_request_diff(
-                repo_name,
-                pr_number
-            )
-        )
-
-        review = self.review_diff(
-            diff
-        )
+        review = self.analyze_pull_request(repo_name, pr_number)
 
         comment = format_review(
             review
@@ -131,6 +124,20 @@ class ReviewService:
                 pr_number,
                 comment
             )
+
+        return review
+
+    def analyze_pull_request(self, repo_name, pr_number, on_progress=None):
+        progress = on_progress or (lambda _step: None)
+
+        progress("fetching")
+        diff = self.github_client.get_pull_request_diff(repo_name, pr_number)
+
+        progress("analyzing")
+        review = self.review_diff(diff)
+
+        progress("generating")
+        self.history_repository.save_review(repo_name, pr_number, review)
 
         return review
 

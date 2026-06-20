@@ -90,7 +90,7 @@ export default function Dashboard() {
 
           <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
             <DashboardChart distribution={distribution} />
-            <RecentReviews />
+            <RecentReviews reviews={metrics?.recent_reviews} />
           </div>
         </div>
       )}
@@ -99,48 +99,20 @@ export default function Dashboard() {
 }
 
 function deriveDistribution(metrics) {
-  const high = firstNumber(
-    metrics?.high,
-    metrics?.high_severity,
-    metrics?.severity?.high
-  );
+  const high = firstNumber(metrics?.high_count);
 
   const medium = firstNumber(
-    metrics?.medium,
-    metrics?.medium_severity,
-    metrics?.severity?.medium
+    metrics?.medium_count
   );
 
   const low = firstNumber(
-    metrics?.low,
-    metrics?.low_severity,
-    metrics?.severity?.low
+    metrics?.low_count
   );
 
-  if (high || medium || low) {
-    return {
-      high,
-      medium,
-      low
-    };
-  }
-
-  const hits = toNumber(metrics?.hits);
-  const misses = toNumber(metrics?.misses);
-  const totalReviews = hits + misses;
-
-  if (!totalReviews) {
-    return {
-      high: 3,
-      medium: 7,
-      low: 12
-    };
-  }
-
   return {
-    high: Math.max(1, Math.round(totalReviews * 0.3)),
-    medium: Math.max(2, Math.round(totalReviews * 0.7)),
-    low: Math.max(3, Math.round(totalReviews * 1.2))
+    high,
+    medium,
+    low
   };
 }
 

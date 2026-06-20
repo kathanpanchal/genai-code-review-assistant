@@ -1,9 +1,3 @@
-const defaultDistribution = {
-  high: 3,
-  medium: 7,
-  low: 12
-};
-
 const severityRows = [
   {
     key: "high",
@@ -27,9 +21,9 @@ const severityRows = [
 
 export default function DashboardChart({ distribution }) {
   const data = {
-    high: toNumber(distribution?.high) || defaultDistribution.high,
-    medium: toNumber(distribution?.medium) || defaultDistribution.medium,
-    low: toNumber(distribution?.low) || defaultDistribution.low
+    high: toNumber(distribution?.high),
+    medium: toNumber(distribution?.medium),
+    low: toNumber(distribution?.low)
   };
 
   const total =
