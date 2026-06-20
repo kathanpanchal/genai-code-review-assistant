@@ -15,6 +15,33 @@ class ReviewService:
         self.cache_repository = CacheRepository()
 
         self.github_client = GitHubClient()
+    
+
+    def parse_pr_url(
+        self,
+        pr_url
+    ):
+
+        parts = (
+            pr_url
+            .replace(
+                "https://github.com/",
+                ""
+            )
+            .split("/")
+        )
+
+        repo_name = (
+            f"{parts[0]}/{parts[1]}"
+        )
+
+        pr_number = int(parts[3])
+
+        return (
+            repo_name,
+            pr_number
+        )
+
 
     def review_diff(
         self,
